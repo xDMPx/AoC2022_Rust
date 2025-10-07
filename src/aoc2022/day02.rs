@@ -49,3 +49,58 @@ fn move_to_shape(c: char) -> Shape {
         _ => unreachable!(),
     }
 }
+
+// X means you need to lose, Y means you need to end the round in a draw, and Z means you need to win
+#[derive(Clone, Copy)]
+enum End {
+    Win,
+    Draw,
+    Lose,
+}
+
+fn symbol_to_end(c: char) -> End {
+    match c {
+        'X' => End::Lose,
+        'Y' => End::Draw,
+        'Z' => End::Win,
+        _ => unreachable!(),
+    }
+}
+
+pub fn part02(file_path: &str) -> usize {
+    let puzzle_input: String = std::fs::read_to_string(file_path).unwrap();
+    let guide = puzzle_input.lines().map(|l| {
+        let o = l.chars().next().unwrap();
+        let e = l.chars().last().unwrap();
+        (move_to_shape(o), symbol_to_end(e))
+    });
+
+    let scores = guide.map(|(o, e)| {
+        let outcome = match e {
+            End::Win => 6,
+            End::Draw => 3,
+            End::Lose => 0,
+        };
+        let r = match (o, e) {
+            (Shape::Rock, End::Win) => Shape::Paper,
+            (Shape::Rock, End::Draw) => Shape::Rock,
+            (Shape::Rock, End::Lose) => Shape::Scissors,
+            (Shape::Paper, End::Win) => Shape::Scissors,
+            (Shape::Paper, End::Draw) => Shape::Paper,
+            (Shape::Paper, End::Lose) => Shape::Rock,
+            (Shape::Scissors, End::Win) => Shape::Rock,
+            (Shape::Scissors, End::Draw) => Shape::Scissors,
+            (Shape::Scissors, End::Lose) => Shape::Paper,
+        };
+        let total = outcome
+            + match r {
+                Shape::Rock => 1,
+                Shape::Paper => 2,
+                Shape::Scissors => 3,
+            };
+
+        total
+    });
+
+    scores.sum()
+}
