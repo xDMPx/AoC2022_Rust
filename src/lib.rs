@@ -30,5 +30,16 @@ mod tests {
         assert_eq!(day05_part1, "CMZ");
         let day05_part2 = aoc2022::day05::part02("./test_puzzle_input/day05_test.txt");
         assert_eq!(day05_part2, "MCD");
+
+        let day06_part1_test1 = aoc2022::day06::part01("./test_puzzle_input/day06_test.txt");
+        assert_eq!(day06_part1_test1, 7);
+        let day06_part1_test2 = aoc2022::day06::part01("./test_puzzle_input/day06_test2.txt");
+        assert_eq!(day06_part1_test2, 5);
+        let day06_part1_test3 = aoc2022::day06::part01("./test_puzzle_input/day06_test3.txt");
+        assert_eq!(day06_part1_test3, 6);
+        let day06_part1_test4 = aoc2022::day06::part01("./test_puzzle_input/day06_test4.txt");
+        assert_eq!(day06_part1_test4, 10);
+        let day06_part1_test5 = aoc2022::day06::part01("./test_puzzle_input/day06_test5.txt");
+        assert_eq!(day06_part1_test5, 11);
     }
 }
