@@ -131,3 +131,40 @@ pub fn part01(file_path: &str) -> usize {
 
     total_sizes
 }
+
+pub fn part02(file_path: &str) -> usize {
+    let puzzle_input: String = std::fs::read_to_string(file_path).unwrap();
+    let mut terminal_output = puzzle_input.lines();
+
+    let mut file_system = FileSystem::new();
+    while let Some(output) = terminal_output.next() {
+        if output.starts_with("$") {
+            let output = output.strip_prefix("$ ").unwrap();
+            if output.starts_with("cd") {
+                let arg = output.split_once(' ').unwrap().1;
+                file_system.cd(arg);
+            }
+        } else {
+            if output.starts_with("dir") {
+                file_system.create_dir(output.split_once(' ').unwrap().1);
+            } else {
+                let (size, name) = output.split_once(' ').unwrap();
+                file_system.create_file(name, size.parse().unwrap());
+            }
+        }
+    }
+
+    let used_space = file_system
+        .dirs
+        .get(&std::path::PathBuf::from("/"))
+        .unwrap()
+        .size;
+    let total_size = file_system
+        .dirs
+        .values()
+        .map(|d| d.size)
+        .filter(|&x| (70000000 - used_space + x) >= 30000000)
+        .min();
+
+    total_size.unwrap()
+}
