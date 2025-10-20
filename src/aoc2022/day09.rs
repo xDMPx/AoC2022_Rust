@@ -73,3 +73,71 @@ fn move_tail(tail_pos: &mut Pos, head_pos: Pos) {
         tail_pos.y += dy.clamp(-1, 1);
     }
 }
+
+pub fn part02(file_path: &str) -> usize {
+    let puzzle_input: String = std::fs::read_to_string(file_path).unwrap();
+    let motions = puzzle_input.lines().map(|l| {
+        let (direction, steps) = l.split_once(' ').unwrap();
+        match direction {
+            "U" => Motion::UP(steps.parse().unwrap()),
+            "D" => Motion::DOWN(steps.parse().unwrap()),
+            "R" => Motion::RIGHT(steps.parse().unwrap()),
+            "L" => Motion::LEFT(steps.parse().unwrap()),
+            _ => unreachable!(),
+        }
+    });
+
+    let mut head_pos = Pos { x: 0, y: 0 };
+    let mut knots_pos = [Pos { x: 0, y: 0 }; 9];
+    let mut visited_pos = std::collections::HashSet::new();
+    for motion in motions {
+        match motion {
+            Motion::UP(y) => {
+                for _ in 0..y {
+                    head_pos.y += 1;
+                    move_tail(&mut knots_pos[0], head_pos);
+                    for i in 1..9 {
+                        let h = knots_pos[i - 1];
+                        move_tail(&mut knots_pos[i], h);
+                    }
+                    visited_pos.insert(knots_pos[8].clone());
+                }
+            }
+            Motion::DOWN(y) => {
+                for _ in 0..y {
+                    head_pos.y -= 1;
+                    move_tail(&mut knots_pos[0], head_pos);
+                    for i in 1..9 {
+                        let h = knots_pos[i - 1];
+                        move_tail(&mut knots_pos[i], h);
+                    }
+                    visited_pos.insert(knots_pos[8].clone());
+                }
+            }
+            Motion::RIGHT(x) => {
+                for _ in 0..x {
+                    head_pos.x += 1;
+                    move_tail(&mut knots_pos[0], head_pos);
+                    for i in 1..9 {
+                        let h = knots_pos[i - 1];
+                        move_tail(&mut knots_pos[i], h);
+                    }
+                    visited_pos.insert(knots_pos[8].clone());
+                }
+            }
+            Motion::LEFT(x) => {
+                for _ in 0..x {
+                    head_pos.x -= 1;
+                    move_tail(&mut knots_pos[0], head_pos);
+                    for i in 1..9 {
+                        let h = knots_pos[i - 1];
+                        move_tail(&mut knots_pos[i], h);
+                    }
+                    visited_pos.insert(knots_pos[8].clone());
+                }
+            }
+        }
+    }
+
+    visited_pos.len()
+}
